@@ -1,13 +1,29 @@
 provider "aws" {
-  region = "us-east-1"
+  region  = "us-east-1"
+  profile = "default"
 }
 
-resource "aws_instance" "demo" {
+provider "aws" {
+  alias   = "second"
+  region  = "us-east-1"
+  profile = "kartik-second"
+}
+
+resource "aws_instance" "ec2_first_user" {
   ami           = "ami-0b5eea76982371e91"
-  instance_type = "t3.micro"
-  key_name       = "project-jenkins"
+  instance_type = "t2.micro"
 
   tags = {
-    Name = "terraform-multiaccount-jenkins-demo"
+    Name = "ec2-from-first-user"
+  }
+}
+
+resource "aws_instance" "ec2_second_user" {
+  provider      = aws.second
+  ami           = "ami-0b5eea76982371e91"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "ec2-from-second-user"
   }
 }
